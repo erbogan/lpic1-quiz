@@ -1,0 +1,85 @@
+<div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <div class="text-center">
+            <div>
+                <h1>Wählen Sie bitte Ihre Wunsch</h1>
+            </div>
+          <button class="btn btn-primary mx-2" (click)="toggleFragenListe()" [disabled]="showFragenListe">Fragen Liste</button>
+          <button class="btn btn-primary mx-2" (click)="toggleEinzelneFrage()"[disabled]="showEinzelneFrage">Einzelne Frage</button>
+        </div>
+        
+        <div *ngIf="showFragenListe" class="mt-3">
+          <div class="container mt-5">
+            <div class="row">
+              <div class="col-md-8 offset-md-2">
+                <div class="card">
+                  <div class="card-header">
+                    Quiz Questions
+                  </div>
+                  <div class="card-body">
+                    <div *ngFor="let question of QuizData" class="mb-4">
+                      <h4 class="card-title">Question {{ question.questionNumber }}:</h4>
+                      <p class="card-text">{{ question.question }}</p>
+                      <ul class="list-group">
+                        <li *ngFor="let option of question.options" class="list-group-item">{{ option }}</li>
+                      </ul>
+                      <p class="mt-3">
+                        <button class="btn btn-primary" type="button" (click)="toggleAnswer(question)">
+                          Antwort
+                        </button>
+                      </p>
+                      <div [ngClass]="{'collapse': !question.showAnswer}" [attr.id]="'answerCollapse' + question.questionNumber">
+                        Antwort ist: {{ question.answer }}
+                      </div>
+                      <hr>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+
+        </div>
+        
+        <div *ngIf="showEinzelneFrage" class="mt-3">
+            <div class="container mt-5">
+                <div class="row">
+                  <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                      <div class="card-header">
+                        Quiz Questions
+                      </div>
+                      <div class="card-body">
+                        <div *ngIf="currentQuestion >= 0" class="mb-4">
+                          <h4 class="card-title">Question {{ QuizData[currentQuestion].questionNumber }}:</h4>
+                          <p class="card-text">{{ QuizData[currentQuestion].question }}</p>
+                          <ul class="list-group">
+                            <li *ngFor="let option of QuizData[currentQuestion].options" class="list-group-item">{{ option }}</li>
+                          </ul>
+                          <p class="mt-3">
+                            <button class="btn btn-primary" type="button" (click)="toggleAnswer(QuizData[currentQuestion])">
+                              Antwort
+                            </button>
+                          </p>
+                          <div [ngClass]="{'collapse': !QuizData[currentQuestion].showAnswer}" [attr.id]="'answerCollapse' + QuizData[currentQuestion].questionNumber">
+                            Antwort ist: {{ QuizData[currentQuestion].answer }}
+                          </div>
+                          <hr>
+                          <div class="text-center">
+                            <button class="btn btn-primary mx-2" (click)="showPreviousQuestion()" [disabled]="currentQuestion === 0">Zurück</button>
+                            <button class="btn btn-primary mx-2" routerLink="/welcome" >Beenden</button>
+                            <button class="btn btn-primary mx-2" (click)="showNextQuestion()" [disabled]="currentQuestion === QuizData.length - 1">Nächst</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

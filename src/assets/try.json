@@ -1,0 +1,58 @@
+[
+    {
+      "question": "Which type of file system is created by mkfs when it is executed with the block device name only and without any additional parameters?",
+      "options": {
+        "A": "XFS",
+        "B": "VFAT",
+        "C": "ext2",
+        "D": "ext3",
+        "E": "ext4"
+      },
+      "answer": "C"
+    },
+    {
+      "question": "Which umask value ensures that new directories can be read, written and listed by their owning user, read and listed by their owning group and are not accessible at all for everyone else?",
+      "options": {
+        "A": "0750",
+        "B": "0027",
+        "C": "0036",
+        "D": "7640",
+        "E": "0029"
+      },
+      "answer": "B"
+    },
+    {
+      "question": "Which of the following commands changes the number of days before the ext3 filesystem on /dev/sda1 has to run through a full filesystem check while booting?",
+      "options": {
+        "A": "tune2fs -d 200 /dev/sda1",
+        "B": "tune2fs -i 200 /dev/sda1",
+        "C": "tune2fs -c 200 /dev/sda1",
+        "D": "tune2fs -n 200 /dev/sda1",
+        "E": "tune2fs --days 200 /dev/sda1"
+      },
+      "answer": "B"
+    },
+    {
+      "question": "Which is the default percentage of reserved space for the root user on new ext4 filesystems?",
+      "options": {
+        "A": "10%",
+        "B": "3%",
+        "C": "15%",
+        "D": "0%",
+        "E": "5%"
+      },
+      "answer": "E"
+    },
+    {
+      "question": "Which of the following is true when a file system, which is neither listed in /etc/fstab nor known to system, is mounted manually?",
+      "options": {
+        "A": "systemd ignores any manual mounts which are not done using the systemctl mount command",
+        "B": "The command systemctl mountsync can be used to create a mount unit based on the existing mount",
+        "C": "systemd automatically generates a mount unit and monitors the mount point without changing it",
+        "D": "Unless a systemd mount unit is created, systemd unmounts the file system after a short period of time",
+        "E": "systemctl unmount must be used to remove the mount because system opens a file descriptor on the mount point"
+      },
+      "answer": "C"
+    }
+  ]
+  
