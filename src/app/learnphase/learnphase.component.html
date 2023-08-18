@@ -1,0 +1,46 @@
+<div class="quiz-container">
+  <ng-container *ngIf="selectedQuestionIndex === null; else singleQuestionView">
+    <div *ngFor="let question of Questions; let i = index" 
+         class="question-box" 
+         (click)="selectQuestion(i)">
+      <h4 class="question-title">Question {{i + 1}}: {{question.question}}</h4>
+      <div class="options-container">
+        <div *ngFor="let option of question.options; let j = index" class="option">
+          <p>{{j + 1}}. {{option}}</p>
+        </div>
+      </div>
+      <button (click)="showAnswer(i); $event.stopPropagation();">Show Answer</button>
+      <button routerLink="/welcome">Beenden</button>
+      <div *ngIf="question.showAnswer" class="answer-container">
+        <p>Correct Answer: {{question.correctAnswer}}</p>
+      </div>
+    </div>
+  </ng-container>
+  
+  <ng-template #singleQuestionView>
+    <div class="selected-question-box">
+      <h4 class="question-title">Question {{selectedQuestionIndex! + 1}}: {{Questions[selectedQuestionIndex!].question}}</h4>
+      <div class="options-container">
+        <div *ngFor="let option of Questions[selectedQuestionIndex!].options" class="option">
+          <p>{{option}}</p>
+        </div>
+
+      </div>
+      <button (click)="showAnswer(selectedQuestionIndex!)">Show Answer</button>
+      
+      <div *ngIf="Questions[selectedQuestionIndex!].showAnswer" class="answer-container">
+        <p>Correct Answer: {{Questions[selectedQuestionIndex!].correctAnswer}}</p>
+      </div>
+      <div class="button-container">
+        <div class="button-row">
+          <button (click)="onBack()" class="nav-button">Zurück</button>
+          <button (click)="OnNext()" class="nav-button">Nächste</button>
+        </div>
+        <div class="button-row">
+          <button class="nav-button" routerLink="/welcome">Beenden</button>
+          <button class="back-button" (click)="deselectQuestion()">Zurück zur Liste</button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

@@ -4,25 +4,24 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './welcome/welcome.component';
-
 import {HttpClientModule } from '@angular/common/http';
-import { QuestionComponent } from './question/question.component';
-import { LernphasewahlenComponent } from './lernphasewahlen/lernphasewahlen.component';
-
-
+import { LearnphaseComponent } from './learnphase/learnphase.component';
+import { CheckComponent } from './check/check.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    LearnphaseComponent,
     WelcomeComponent,
-    QuestionComponent,
-    LernphasewahlenComponent,
+    CheckComponent
+
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent]

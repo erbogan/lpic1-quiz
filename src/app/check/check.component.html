@@ -1,0 +1,12 @@
+<h1>{{currentIndex + 1}}. question:</h1>
+<p>{{Questions[currentIndex].question}}</p>
+<div *ngFor="let option of Questions[currentIndex].options; let i = index">
+  <label>
+    <input type="checkbox" name="answer" [value]="option">
+    {{option}}
+  </label>
+</div>
+
+<button (click)="previousQuestion()">Zurück</button>
+<button (click)="SkipQuestion()">Skip</button>
+<button (click)="nextQuestion()">Nächste</button>
