@@ -1,12 +1,35 @@
-<h1>{{currentIndex + 1}}. question:</h1>
-<p>{{Questions[currentIndex].question}}</p>
+<h1>{{ currentIndex + 1 }}. question:</h1>
+<p>{{ Questions[currentIndex].question }}</p>
 <div *ngFor="let option of Questions[currentIndex].options; let i = index">
   <label>
-    <input type="checkbox" name="answer" [value]="option">
-    {{option}}
-  </label>
-</div>
-
-<button (click)="previousQuestion()">Zurück</button>
-<button (click)="SkipQuestion()">Skip</button>
-<button (click)="nextQuestion()">Nächste</button>
+    <input type="radio" name="answer" value="option[0]" />{{ option }}
+    <!-- <input type="radio" name="answer" [value]="option[0]"> -->
+    <!-- <span *ngIf="selectedAnswer[currentIndex] == i">
+      <input
+        type="radio"
+        name="answer"
+        (click)="isChoosen(currentIndex, i, option[0])"
+        checked
+      />
+      {{ option }}
+    </span>
+    <span *ngIf="selectedAnswer[currentIndex] != i">
+      <input
+        type="radio"
+        name="answer"
+        (click)="isChoosen(currentIndex, i, option[0])"
+      />
+      {{ option }}
+    </span>
+  </label> -->
+    <!-- </div> -->
+    </label
+    >
+  </div>
+  
+  <div>     
+        <button (click)="SkipQuestion()">Skip</button>
+        <button (click)="previousQuestion()">Zurück</button>  
+    <!-- <button (click)="isTrue(currentIndex[0])">Nächste</button> -->
+    <!-- </div> -->
+  </div>

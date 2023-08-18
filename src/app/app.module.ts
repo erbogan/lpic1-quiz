@@ -7,6 +7,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import {HttpClientModule } from '@angular/common/http';
 import { LearnphaseComponent } from './learnphase/learnphase.component';
 import { CheckComponent } from './check/check.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { CheckComponent } from './check/check.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    FormsModule
 
   ],
   providers: [],
