@@ -62,24 +62,47 @@ this.falseAnswer++;
 
   }
   Gewaehlt(option: string, event: any): void {
-    if (this.Questions[this.currentIndex].questionType === 'fill-in') {
-      this.selectedOption[this.currentIndex] = event.target.value;
-      this.selectedOption = []; 
-      this.selectedOption.push(event.target.value);
+    // Şu anki soru tipini al
+    const questionType = this.Questions[this.currentIndex].questionType;
+  
+    if (questionType === 'fill-in') {
+      // Dolgu boşluklu sorular için
+      this.handleFillInQuestion(event);
+    } else if (questionType === 'multiple-choice') {
+      // Çoktan seçmeli sorular için
+      this.handleMultipleChoiceQuestion(option, event);
+      console.log(this.selectedOption)
+    } else if (questionType === 'single-choice') {
+      // Tekli seçenekli sorular için
+      this.handleSingleChoiceQuestion(option);
     }
-    console.log('event',event);
-    const isChecked = event.target.checked;
-    if (isChecked) {
-      this.selectedOption = []; 
-      this.selectedOption.push(option); 
+  }
+  
+  // Dolgu boşluklu sorular için bir yardımcı fonksiyon
+  handleFillInQuestion(event: any): void {
+    this.selectedOption = [];
+    this.selectedOption.push(event.target.value);
+  }
+  
+  // Çoktan seçmeli sorular için bir yardımcı fonksiyon
+  handleMultipleChoiceQuestion(option: string, event: any): void {
+    if (event.target.checked) {
+      // Seçenek işaretliyse, bu seçeneği selectedOption dizisine ekle
+      this.selectedOption.push(option);
     } else {
+      // Seçenek işaretli değilse, bu seçeneği selectedOption dizisinden çıkar
       const index = this.selectedOption.indexOf(option);
       if (index >= 0) {
         this.selectedOption.splice(index, 1);
       }
-    }  
+    }
   }
-
+  
+  // Tekli seçenekli sorular için bir yardımcı fonksiyon
+  handleSingleChoiceQuestion(option: string): void {
+    this.selectedOption = []; // Önceki seçenekleri temizle
+    this.selectedOption.push(option); // Yeni seçeneği ekle
+  }
   
 
   isEqual(arr1: string[], arr2: string[]): boolean {
