@@ -55,6 +55,8 @@ export class CheckComponent {
     }
     else{
 this.falseAnswer++;
+console.log(this.falseAnswer) //gece burada kaldin buradan devam et
+this.selectedOption=[];
     }
     if (this.falseAnswer>0.2*this.Questions.length || this.currentIndex>120){
       this.router.navigate(['/result']);
