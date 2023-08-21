@@ -8,6 +8,7 @@ import {HttpClientModule } from '@angular/common/http';
 import { LearnphaseComponent } from './learnphase/learnphase.component';
 import { CheckComponent } from './check/check.component';
 import { FormsModule } from '@angular/forms';
+import { ResultComponent } from './result/result.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { FormsModule } from '@angular/forms';
     AppComponent,
     LearnphaseComponent,
     WelcomeComponent,
-    CheckComponent
+    CheckComponent,
+    ResultComponent
 
   ],
   imports: [

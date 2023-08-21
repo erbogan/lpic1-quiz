@@ -1,1 +1,93 @@
-/* You can add global styles to this file, and also import other style files */
+.quiz-container {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f7f9fc;
+  }
+  
+  .question-box, .selected-question-box {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .question-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .options-container {
+    margin-top: 15px;
+  }
+  
+  .option {
+    padding: 8px 0;
+    color: #555;
+  }
+  
+  .nav-button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .nav-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .back-button {
+    padding: 10px 15px;
+    background-color: #ccc;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .back-button:hover {
+    background-color: #aaa;
+  }
+  
+  .button-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  button {
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  .answer-container {
+    margin-top: 15px;
+    background-color: #e8f5e9;
+    padding: 10px;
+    border: 1px solid #a5d6a7;
+    border-radius: 5px;
+  }
+  
+  

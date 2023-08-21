@@ -1,35 +1,27 @@
-<h1>{{ currentIndex + 1 }}. question:</h1>
-<p>{{ Questions[currentIndex].question }}</p>
-<div *ngFor="let option of Questions[currentIndex].options; let i = index">
-  <label>
-    <input type="radio" name="answer" value="option[0]" />{{ option }}
-    <!-- <input type="radio" name="answer" [value]="option[0]"> -->
-    <!-- <span *ngIf="selectedAnswer[currentIndex] == i">
-      <input
-        type="radio"
-        name="answer"
-        (click)="isChoosen(currentIndex, i, option[0])"
-        checked
-      />
-      {{ option }}
-    </span>
-    <span *ngIf="selectedAnswer[currentIndex] != i">
-      <input
-        type="radio"
-        name="answer"
-        (click)="isChoosen(currentIndex, i, option[0])"
-      />
-      {{ option }}
-    </span>
-  </label> -->
-    <!-- </div> -->
-    </label
-    >
-  </div>
-  
-  <div>     
-        <button (click)="SkipQuestion()">Skip</button>
-        <button (click)="previousQuestion()">Zurück</button>  
-    <!-- <button (click)="isTrue(currentIndex[0])">Nächste</button> -->
+
+<div *ngIf="Questions && Questions.length > 0">
+  <h1>{{ currentIndex + 1 }}. question:</h1>
+  <p>{{ Questions[currentIndex].question }}</p>
+  <br>QType:{{Questions[currentIndex].questionType}} <br>
+  <div *ngIf="Questions[currentIndex].questionType === 'fill-in'">
+    <!-- <div *ngIf="Questions[currentIndex].questionType==='fill-in'"> -->
+      <h3>in fill in</h3>
+      <input type="text"  (change)="Gewaehlt('', $event)"  />
     <!-- </div> -->
   </div>
+  <div *ngFor="let option of Questions[currentIndex].options let i = index">
+    <label *ngIf="Questions[currentIndex].questionType==='single-choice'">
+      <input type="radio" name="answer" [value]="option[0]" (change)="Gewaehlt(option[0], $event)" />{{ option }}
+    </label>
+    <label *ngIf="Questions[currentIndex].questionType==='multiple-choice'">
+      <input type="checkbox"  [value]="option[0]" (change)="Gewaehlt(option[0], $event)" />{{ option }}
+    </label>
+
+
+  </div>
+  <div>
+    <button (click)="SkipQuestion()">Skip</button>
+    <button (click)="previousQuestion()">Zurück</button>
+    <button *ngIf="selectedOption !=null" (click)="isTrue(currentIndex,selectedOption)">Nächste</button>
+  </div>
+</div>
