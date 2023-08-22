@@ -17,7 +17,8 @@ import { ResultComponent } from './result/result.component';
     LearnphaseComponent,
     WelcomeComponent,
     CheckComponent,
-    ResultComponent
+    ResultComponent,
+   
 
   ],
   imports: [

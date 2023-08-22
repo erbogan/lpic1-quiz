@@ -15,4 +15,5 @@ export class QuizappService {
   getQuestions(): Observable<any>{
     return  this.http.get<any>(this.apiUrl)
   }
+
 }
