@@ -1,30 +1,29 @@
-  <div *ngIf="Questions && Questions.length > 0">
-      <h1>{{ currentIndex + 1 }}. question:</h1>
-      <p>{{ Questions[currentIndex].question }}</p>
-    
-      <div *ngIf="Questions[currentIndex].questionType === 'fill-in'">
-        <input type="text" #fillInAnswer (change)="checkanswer(fillInAnswer.value)" />
-        <h1>fillInAnswer.value</h1>
-      </div>
-      <div *ngFor="let option of Questions[currentIndex].options; let i = index">
-        <label *ngIf="Questions[currentIndex].questionType==='single-choice'">
-          <input type="radio" name="answer" [value]="option" (change)="checkanswer(option[0])"
-             />
-          {{ option }}
-        </label>
-        <label *ngIf="Questions[currentIndex].questionType==='multiple-choice'">
-          <input type="checkbox" [value]="option" (change)="checkanswer(DoArray(option[0], $event))"
-             />
-          {{ option }}
-        </label>
-      </div>
-      <div>
-        <button (click)="SkipQuestion()">Skip</button>
-        <button (click)="previousQuestion()">Zurück</button>
-        <button  (click)="nextQuestion()">Nächste</button>
-      </div>
-    </div>
-    
-    
-    <!-- [checked]="benutzerAnswers[currentIndex] && benutzerAnswers[currentIndex][0] === option[0]" -->
-   
+<div *ngIf="Questions && Questions.length > 0">
+  <h1>{{ currentIndex + 1 }}. question:</h1>
+  <p>{{ Questions[currentIndex].question }}</p>
+
+  <div *ngIf="Questions[currentIndex].questionType === 'fill-in'">
+    <h3>in fill in</h3>
+    <input type="text" (change)="Gewaehlt('',$event)" />
+  </div>
+  <div *ngFor="let option of Questions[currentIndex].options; let i = index">
+    <label *ngIf="Questions[currentIndex].questionType==='single-choice'">
+      <input type="radio" name="answer" [value]="option[0]" (change)="Gewaehlt(option[0], $event)"
+        [checked]="benutzerAnswers[currentIndex] && benutzerAnswers[currentIndex][0] === option[0]" />
+      {{ option }}
+    </label>
+    <label *ngIf="Questions[currentIndex].questionType==='multiple-choice'">
+      <input type="checkbox" [value]="option[0]" (change)="Gewaehlt(option[0], $event)"
+        [checked]="benutzerAnswers[currentIndex] && benutzerAnswers[currentIndex].includes(option[0])" />
+      {{ option }}
+    </label>
+  </div>
+  <div>
+    <button (click)="SkipQuestion()">Skip</button>
+    <button (click)="previousQuestion()">Zurück</button>
+    <button  (click)="onButtonClick()">Nächste</button>
+  </div>
+</div>
+
+
+

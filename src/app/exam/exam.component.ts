@@ -9,153 +9,126 @@ import { Route, Router } from '@angular/router';
   styleUrls: ['./exam.component.css'],
 })
 export class ExamComponent {
-  Questions: any[] = [];
-  currentIndex: number = 0;
-  correctAnswer: number = 0;
-  falseAnswer: number = 0;
-  benutzerAnswers: string[] = [];
-
- 
-
   constructor(
     private service: QuizappService,
-    private shs: SharedService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private shs: SharedService
+  ) { }
+
+  Questions: any[] = [];
+  currentIndex: number = 0;
+  selectedOption: string[] = [];
+  correctAnswer: number = 0;
+  falseAnswer: number = 0;
+  benutzerAnswers: any[] = [];
 
   ngOnInit(): void {
     this.service.getQuestions().subscribe((data) => {
       this.Questions = data;
-      console.log(this.Questions[this.currentIndex].questionType);
+      this.shs.resetDaten();
     });
   }
-  DoArray(option: string, event: any): string[] {
-    const questionType = this.Questions[this.currentIndex].questionType;
-  
-    if (questionType === 'multiple-choice') {
-        this.handleMultipleChoiceQuestion(option, event);
-        console.log(this.benutzerAnswers);
-    }
-  
-    return this.benutzerAnswers;  // geri dönüş değerini ekledik
-}
+  previousQuestion(): void {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
 
-handleMultipleChoiceQuestion(option: string, event: any): string[] {
-    if (event.target.checked) {
-        this.benutzerAnswers.push(option);
+      // Önceki soruya ait kullanıcının cevabını `selectedOption` değişkenine ata
+      this.selectedOption = this.benutzerAnswers[this.currentIndex];
+      console.log('pre selOpt:', this.selectedOption)
+
+    }
+  }
+
+
+  SkipQuestion(): void {
+    this.currentIndex++;
+  }
+
+
+  isTrue(questionArrayIndex: number, benutzerAntwort: string[]): void {
+    const correctAnswer = this.Questions[this.currentIndex].correctAnswer;
+    const sortedCorrectAnswer = correctAnswer.slice().sort();
+    const sortedBenutzerAntwort = benutzerAntwort.slice().sort();
+
+    if (this.benutzerAnswers.length > questionArrayIndex) {
+      this.benutzerAnswers[questionArrayIndex] = sortedBenutzerAntwort;
     } else {
-        const index = this.benutzerAnswers.indexOf(option);
-        if (index >= 0) {
-            this.benutzerAnswers.splice(index, 1);
-        }
+      this.benutzerAnswers.push(sortedBenutzerAntwort);
     }
-    
-    return this.benutzerAnswers;  // geri dönüş değerini ekledik
-}
 
-  
-
-  checkanswer(benutzerantwort: string | string[]): void {
-    const currentQuestion = this.Questions[this.currentIndex];
-
-    switch (currentQuestion.questionType) {
-      case 'single-choice':
-        console.log(currentQuestion.questionType)
-        const correctAnswerSingle = currentQuestion.correctAnswer[0];
-        if (benutzerantwort[0] === correctAnswerSingle) {
-          this.correctAnswer++;
-          console.log('Correct Answer', this.correctAnswer);
-          this.benutzerAnswers.push(benutzerantwort[0]);
-          console.log('Array Benutzer Antwort', benutzerantwort);
-
-          // console.log(benutzerantwort)
-          console.log(
-            'benutzer Answer: ',
-            benutzerantwort,
-            'System antwort',
-            correctAnswerSingle
-          );
-          console.log(
-            'correct Answer: ',
-            this.correctAnswer,
-            'False Answer',
-            this.falseAnswer
-          );
-        } else {
-          this.falseAnswer++;
-
-          console.log(
-            'benutzer Answer: ',
-            benutzerantwort,
-            'System antwort',
-            correctAnswerSingle
-          );
-          console.log(
-            'correct Answer: ',
-            this.correctAnswer,
-            'False Answer',
-            this.falseAnswer
-          );
-        }
-        break;
-
-      case 'multiple-choice':
-        console.log('kullanici cevabi',benutzerantwort)
-        console.log(currentQuestion.questionType)
-        if (Array.isArray(benutzerantwort)) {
-          const correctAnswermulti = currentQuestion.correctAnswer;
-          const isCorrectMulti = benutzerantwort.every((answer: string) =>
-            correctAnswermulti.includes(answer),
-            );
-            
-            
-            if (isCorrectMulti) {
-              this.correctAnswer++;
-              this.benutzerAnswers.push(benutzerantwort[0]);
-              console.log('multi Benutzer Antwort',benutzerantwort,'multi System Antwort',correctAnswermulti,'\nCorrect answer vom multi',this.correctAnswer,'Falsce anstwort vom multi',this.falseAnswer)
-
-          } else {
-            this.falseAnswer++;
-
-          }
-        }
-        break;
-      case 'fill-in':
-        console.log(currentQuestion.questionType)
-        const correctFill = currentQuestion.correctAnswer[0];
-        console.log('System cevabi:',correctFill);
-        console.log('Kullanici cevabi',benutzerantwort)
-
-        if (benutzerantwort === correctFill) {
-          this.correctAnswer++;
-          console.log('Dogru Cevap Sayisi:',this.correctAnswer)
-          this.benutzerAnswers.push(benutzerantwort[0]);
- 
-        } else {
-          this.falseAnswer++;
-          console.log('Yanlis Cevap Sayisi:',this.falseAnswer)
-   
-        }
-        break;
-      default:
-        console.error('Unbekannte Type');
-        break;
+    if (this.isEqual(sortedCorrectAnswer, sortedBenutzerAntwort)) {
+      this.correctAnswer++;
+      console.log('Dogru cevap Sayisi', this.correctAnswer)
+    } else {
+      this.falseAnswer++;
+      console.log('Yanlis cevap Sayisi', this.falseAnswer)
     }
+    if (this.currentIndex >= 120 || this.falseAnswer > this.Questions.length * 0.2) {
+      this.router.navigate(['/result']);
+    }
+
+    this.nextQuestion();
+
+
+    this.shs.setCorrectAnswer(this.correctAnswer);
+    this.shs.setfalseAnswer(this.falseAnswer);
+  }
+
+  Gewaehlt(option: string, event: any): void {
+    const questionType = this.Questions[this.currentIndex].questionType;
+
+    if (questionType === 'fill-in') {
+      this.handleFillInQuestion(event);
+    } else if (questionType === 'multiple-choice') {
+      this.handleMultipleChoiceQuestion(option, event);
+    } else if (questionType === 'single-choice') {
+      this.handleSingleChoiceQuestion(option);
+    }
+  }
+
+  handleFillInQuestion(event: any): void {
+    this.selectedOption = [event.target.value];
+  }
+
+  handleMultipleChoiceQuestion(option: string, event: any): void {
+    if (event.target.checked) {
+      this.selectedOption.push(option);
+    } else {
+      const index = this.selectedOption.indexOf(option);
+      if (index >= 0) {
+        this.selectedOption.splice(index, 1);
+      }
+    }
+  }
+
+  handleSingleChoiceQuestion(option: string): void {
+    this.selectedOption = [option];
+  }
+
+  isEqual(arr1: string[], arr2: string[]): boolean {
+    if (arr1.length !== arr2.length) return false;
+    const sorted1 = arr1.slice().sort();
+    const sorted2 = arr2.slice().sort();
+    for (let i = 0; i < sorted1.length; i++) {
+      if (sorted1[i] !== sorted2[i]) return false;
+    }
+    return true;
+  }
+
+  reset(): void {
+    this.selectedOption = [];
+  }
+
+  async onButtonClick() {
+    const questionArrayIndex = this.currentIndex;
+    const benutzerAntwort = this.selectedOption;
+    await this.isTrue(questionArrayIndex, benutzerAntwort);
+    this.reset();
   }
 
   nextQuestion(): void {
-   
+    if (this.currentIndex < this.Questions.length - 1) {
       this.currentIndex++;
-
-    if (this.falseAnswer > 14) {
-      console.log('False answers exceeded 14:', this.falseAnswer);
-      this.router.navigate(['/result']);
     }
-  }
-  previousQuestion() {
-    this.currentIndex--;
-  }
-  SkipQuestion() {
-    this.currentIndex++;
   }
 }
