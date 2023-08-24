@@ -21,39 +21,40 @@
     
     correctAnswer: number = 0;
     falseAnswer: number = 0;
-    Der_Fragen_Zahl: number=0;
     benutzerAnswers:any[]=[];
+    
+
 
      
     ngOnInit(): void {
       this.service.getQuestions().subscribe((data) => {
         this.Questions = data;
-        this.shs.resetDaten()
-        this.correctAnswer = this.shs.getCorrectAnswer()
+        this.shs.resetDaten();
+       
       });
     }
+getResult(){
+  
+}
+
     nextQuestion(): void {
       if (this.currentIndex < this.Questions.length - 1) {
         this.currentIndex++;
         this.correctAnswer++;
+      //  console.log('beim next',this.correctAnswer)
         this.selectedOption = this.benutzerAnswers[this.currentIndex];
         console.log('correct',this.correctAnswer)
       }
     }
 
     previousQuestion(): void {
-      // Önceki soruya geri dön
       if (this.currentIndex > 0) {
           this.currentIndex--;
   
           // Önceki soruya ait kullanıcının cevabını `selectedOption` değişkenine ata
           this.selectedOption = this.benutzerAnswers[this.currentIndex];
           console.log('pre selOpt:',this.selectedOption)
-          // if (this.benutzerAnswers[this.currentIndex]) {
-          // } else {
-          //     // Kullanıcı önceki soruya cevap vermemişse, seçili seçeneği sıfırla
-          //     // this.benutzerAnswers[this.currentIndex] = null;
-          // }
+        
       }
   }
   
@@ -81,16 +82,22 @@
         this.nextQuestion();
       } else {
         this.falseAnswer++;
+       // console.log('beim istrue',this.falseAnswer)
         this.selectedOption = [];
         console.log('false: ',this.falseAnswer);
       }
       
-      if (this.falseAnswer > 0.2 * this.Questions.length || this.currentIndex > 120 ) {
+      if (this.currentIndex > 120 || this.falseAnswer>6 ) {
         this.router.navigate(['/result']);
       }
+      this.shs.setCorrectAnswer(this.correctAnswer)
+      this.shs.getCorrectAnswer();
+      this.shs.setfalseAnswer(this.falseAnswer);
+      this.shs.getFalseAnswer();
+      console.log('Falsche Antworten',this.falseAnswer);
+      console.log('Richtige Antworten',this.falseAnswer);
     }
-    
-    
+     
 
     Gewaehlt(option: string, event: any): void {
       // Şu anki soru tipini al
@@ -160,7 +167,7 @@
       const benutzerAntwort = this.selectedOption; // Örneğin seçilen seçeneği kullanın
       console.log('vor isTrue:',questionArrayIndex, benutzerAntwort)
       await this.isTrue(questionArrayIndex, benutzerAntwort);
-      // this.reset();
+       this.reset();
   }
 
 
