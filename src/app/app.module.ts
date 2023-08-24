@@ -9,6 +9,7 @@ import { LearnphaseComponent } from './learnphase/learnphase.component';
 import { CheckComponent } from './check/check.component';
 import { FormsModule } from '@angular/forms';
 import { ResultComponent } from './result/result.component';
+import { ExamComponent } from './exam/exam.component';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { ResultComponent } from './result/result.component';
     WelcomeComponent,
     CheckComponent,
     ResultComponent,
+    ExamComponent,
    
 
   ],
