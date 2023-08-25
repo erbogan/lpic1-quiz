@@ -1,179 +1,180 @@
-  import { Component, OnInit,Output,EventEmitter} from '@angular/core';
-  import { QuizappService } from '../quizapp.service';
-  import { Router } from '@angular/router';
-  import { SharedService } from '../shared.service';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { QuizappService } from '../quizapp.service';
+import { Router } from '@angular/router';
+import { SharedService } from '../shared.service';
 
-  @Component({
-    selector: 'app-check',
-    templateUrl: './check.component.html',
-    styleUrls: ['./check.component.css'],
-  })
-  export class CheckComponent {
-    questionArrayIndex: any;
-    constructor(
-      private service: QuizappService,
-      private router:Router,
-      private shs: SharedService) {}
+@Component({
+  selector: 'app-check',
+  templateUrl: './check.component.html',
+  styleUrls: ['./check.component.css'],
+})
+export class CheckComponent {
+  questionArrayIndex: any;
+  constructor(
+    private service: QuizappService,
+    private router: Router,
+    private shs: SharedService
+  ) {}
 
-    Questions: any[] = [];
-    currentIndex: number = 0;
-    selectedOption: string[] = [];
-    
-    correctAnswer: number = 0;
-    falseAnswer: number = 0;
-    benutzerAnswers:any[]=[];
-    
+  Questions: any[] = [];
+  currentIndex: number = 0;
+  selectedOption: string[] = [];
 
+  correctAnswer: number = 0;
+  falseAnswer: number = 0;
+  benutzerAnswers: any[] = [];
 
-     
-    ngOnInit(): void {
-      this.service.getQuestions().subscribe((data) => {
-        this.Questions = data;
-        this.shs.resetDaten();
-       
-      });
-    }
-getResult(){
-  
-}
-
-    nextQuestion(): void {
-      if (this.currentIndex < this.Questions.length - 1) {
-        this.currentIndex++;
-        this.correctAnswer++;
-      //  console.log('beim next',this.correctAnswer)
-        this.selectedOption = this.benutzerAnswers[this.currentIndex];
-        console.log('correct',this.correctAnswer)
-      }
-    }
-
-    previousQuestion(): void {
-      if (this.currentIndex > 0) {
-          this.currentIndex--;
-  
-          // Önceki soruya ait kullanıcının cevabını `selectedOption` değişkenine ata
-          this.selectedOption = this.benutzerAnswers[this.currentIndex];
-          console.log('pre selOpt:',this.selectedOption)
-        
-      }
+  ngOnInit(): void {
+    this.service.getQuestions().subscribe((data) => {
+      this.Questions = data;
+      this.shs.resetDaten();
+    });
   }
-  
-    
-    SkipQuestion(): void {
+
+  nextQuestion(): void {
+    if (this.currentIndex < this.Questions.length - 1) {
       this.currentIndex++;
     }
-    
+  }
 
-    isTrue(questionArrayIndex: number, benutzerAntwort: string[]): void {
-      const correctAnswer = this.Questions[this.currentIndex].correctAnswer;
-      const sortedCorrectAnswer = correctAnswer.slice().sort();
-      const sortedBenutzerAntwort = benutzerAntwort.slice().sort();
-    
-      // Bu kısmı güncelledim
-      if (this.benutzerAnswers.length > questionArrayIndex) {
-        this.benutzerAnswers[questionArrayIndex] = sortedBenutzerAntwort;
-      } else {
-        this.benutzerAnswers.push(sortedBenutzerAntwort);
-      }
-      console.log('BenutzerAnswers:', this.benutzerAnswers);
-    
-      // Şimdi sıralanmış dizileri karşılaştırıyoruz
-      if (this.isEqual(sortedCorrectAnswer, sortedBenutzerAntwort)) {
-        this.nextQuestion();
-      } else {
-        this.falseAnswer++;
-       // console.log('beim istrue',this.falseAnswer)
-        this.selectedOption = [];
-        console.log('false: ',this.falseAnswer);
-      }
-      
-      if (this.currentIndex > 120 || this.falseAnswer>6 ) {
-        this.router.navigate(['/result']);
-      }
-      this.shs.setCorrectAnswer(this.correctAnswer)
-      this.shs.getCorrectAnswer();
-      this.shs.setfalseAnswer(this.falseAnswer);
-      this.shs.getFalseAnswer();
-      console.log('Falsche Antworten',this.falseAnswer);
-      console.log('Richtige Antworten',this.falseAnswer);
-    }
-     
+  previousQuestion(): void {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
 
-    Gewaehlt(option: string, event: any): void {
-      // Şu anki soru tipini al
-      const questionType = this.Questions[this.currentIndex].questionType;
-    
-      if (questionType === 'fill-in') {
-        // Dolgu boşluklu sorular için
-        this.handleFillInQuestion(event);
-      } else if (questionType === 'multiple-choice') {
-        // Çoktan seçmeli sorular için
-        this.handleMultipleChoiceQuestion(option, event);
-        console.log(this.selectedOption)
-      } else if (questionType === 'single-choice') {
-        // Tekli seçenekli sorular için
-        this.handleSingleChoiceQuestion(option);
-      }
+      this.selectedOption = this.benutzerAnswers[this.currentIndex];
+      console.log('pre selOpt:', this.selectedOption);
     }
-    
-    // Dolgu boşluklu sorular için bir yardımcı fonksiyon
-    handleFillInQuestion(event: any): void {
+  }
+
+  SkipQuestion(): void {
+    this.currentIndex++;
+  }
+
+  isTrue(questionArrayIndex: number, benutzerAntwort: string[]): void {
+    const correctAnswer = this.Questions[this.currentIndex].correctAnswer;
+    const sortedCorrectAnswer = correctAnswer.slice().sort();
+    const sortedBenutzerAntwort = benutzerAntwort.slice().sort();
+
+    if (sortedCorrectAnswer === benutzerAntwort[this.currentIndex] && this.Questions[this.currentIndex]===benutzerAntwort[this.currentIndex]) {
+      this.nextQuestion();
+    }
+
+    this.benutzerAnswers[this.currentIndex] = sortedBenutzerAntwort;
+
+    if (this.isEqual(sortedCorrectAnswer, sortedBenutzerAntwort)) {
+      this.correctAnswer++;
+      console.log('Falsche Antworten', this.falseAnswer);
+      console.log('Richtige Antworten', this.correctAnswer);
+      this.nextQuestion();
+    } else {
+      this.falseAnswer++;
       this.selectedOption = [];
-      this.selectedOption.push(event.target.value);
+      console.log('false: ', this.falseAnswer);
     }
-    
-    // Çoktan seçmeli sorular için bir yardımcı fonksiyon
-    handleMultipleChoiceQuestion(option: string, event: any): void {
-      if (event.target.checked) {
-        // Seçenek işaretliyse, bu seçeneği selectedOption dizisine ekle
-        this.selectedOption.push(option);
-      } else {
-        // Seçenek işaretli değilse, bu seçeneği selectedOption dizisinden çıkar
-        const index = this.selectedOption.indexOf(option);
-        if (index >= 0) {
-          this.selectedOption.splice(index, 1);
-        }
+
+    if (this.currentIndex > 120 || this.falseAnswer > 6) {
+      this.router.navigate(['/result']);
+    }
+    this.shs.setCorrectAnswer(this.correctAnswer);
+    this.shs.getCorrectAnswer();
+    this.shs.setfalseAnswer(this.falseAnswer);
+    this.shs.getFalseAnswer();
+  }
+
+  Gewaehlt(option: string, event: any): void {
+    const questionType = this.Questions[this.currentIndex].questionType;
+
+    if (questionType === 'fill-in') {
+      this.handleFillInQuestion(event);
+    } else if (questionType === 'multiple-choice') {
+      this.handleMultipleChoiceQuestion(option, event);
+      console.log(this.selectedOption);
+    } else if (questionType === 'single-choice') {
+      this.handleSingleChoiceQuestion(option);
+    }
+  }
+
+  handleFillInQuestion(event: any): void {
+    this.selectedOption = [];
+    this.selectedOption.push(event.target.value);
+  }
+
+  handleMultipleChoiceQuestion(option: string, event: any): void {
+    if (event.target.checked) {
+      this.selectedOption.push(option);
+    } else {
+      const index = this.selectedOption.indexOf(option);
+      if (index >= 0) {
+        this.selectedOption.splice(index, 1);
       }
     }
-    
-    // Tekli seçenekli sorular için bir yardımcı fonksiyon
-    handleSingleChoiceQuestion(option: string): void {
-      this.selectedOption = []; // Önceki seçenekleri temizle
-      this.selectedOption.push(option); // Yeni seçeneği ekle
-    }
-    
+  }
+  handleSingleChoiceQuestion(option: string): void {
+    this.selectedOption = [];
+    this.selectedOption.push(option);
+  }
 
-    isEqual(arr1: string[], arr2: string[]): boolean {
-      if (arr1.length !== arr2.length) {
+  isEqual(arr1: string[], arr2: string[]): boolean {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+    const sorted1 = arr1.slice().sort();
+    const sorted2 = arr2.slice().sort();
+
+    for (let i = 0; i < sorted1.length; i++) {
+      if (sorted1[i] !== sorted2[i]) {
         return false;
       }
-      const sorted1 = arr1.slice().sort();
-      const sorted2 = arr2.slice().sort();
-
-      for (let i = 0; i < sorted1.length; i++) {
-        if (sorted1[i] !== sorted2[i]) {
-          return false;
-        }
-      }
-      return true;
     }
+    return true;
+  }
 
-  reset():void{
-    this.selectedOption=[];
+  reset(): void {
+    this.selectedOption = [];
   }
 
   async onButtonClick() {
-      const questionArrayIndex = this.currentIndex; // Örneğin mevcut soru indeksini kullanın
-      const benutzerAntwort = this.selectedOption; // Örneğin seçilen seçeneği kullanın
-      console.log('vor isTrue:',questionArrayIndex, benutzerAntwort)
-      await this.isTrue(questionArrayIndex, benutzerAntwort);
-       this.reset();
-  }
+    const questionArrayIndex = this.currentIndex;
+    const benutzerAntwort = this.selectedOption;
+    const questionType = this.Questions[this.currentIndex].questionType;
+    const correctAnswer = this.Questions[this.currentIndex].correctAnswer;
+    const sortedCorrectAnswer = correctAnswer.slice().sort();
+    const sortedBenutzerAntwort = benutzerAntwort.slice().sort();
 
+    // Kullanıcının cevabının boş olup olmadığını, sorunun türüne göre kontrol edin
+    switch (questionType) {
+        case 'single-choice':
+            if (benutzerAntwort.length === 0) {
+                console.log('Soru boş bırakılamaz.');
+                return;
+            }
+            break;
+        case 'multiple-choice':
+            // Eğer çoktan seçmeli soruysa en az 2 cevap seçilmiş olmalı
+            if (benutzerAntwort.length < 2) {
+                console.log('Çoktan seçmeli sorularda en az iki seçenek işaretlenmelidir.');
+                return;
+            }
+            break;
+        case 'fill-in':
+            if (!benutzerAntwort[0] || benutzerAntwort[0].trim() === "") {
+                console.log('Cevap boş bırakılamaz.');
+                return;
+            }
+            break;
+    }
 
-    // isChoosen(qarrayind: number, num: number, optxt: string): void {
-    //   this.selectedAnswer[qarrayind] = num
-    //   if(this.Questions[this.currentIndex].correctAnswer[0][0] == optxt) {
-    //   }
-    // }
-  }
+    // Cevap kontrolü
+    if (!this.isEqual(sortedCorrectAnswer, sortedBenutzerAntwort)) {
+        console.log('Cevap yanlış, ilerleyemezsiniz.');
+        return;
+    }
+
+    this.isTrue(questionArrayIndex, benutzerAntwort);
+    console.log('vomOnbuttonClick', this.selectedOption);
+    this.reset();
+}
+
+  
+  
+}

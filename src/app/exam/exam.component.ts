@@ -21,6 +21,14 @@ export class ExamComponent {
   correctAnswer: number = 0;
   falseAnswer: number = 0;
   benutzerAnswers: any[] = [];
+  IsAnswertd:boolean=false;
+
+
+  IsAnswered(): boolean {
+    return this.benutzerAnswers[this.currentIndex] && this.benutzerAnswers[this.currentIndex].length > 0;
+  }
+  
+  
 
   ngOnInit(): void {
     this.service.getQuestions().subscribe((data) => {
@@ -28,13 +36,13 @@ export class ExamComponent {
       this.shs.resetDaten();
     });
   }
+
+  
   previousQuestion(): void {
     if (this.currentIndex > 0) {
       this.currentIndex--;
-
-      // Önceki soruya ait kullanıcının cevabını `selectedOption` değişkenine ata
-      this.selectedOption = this.benutzerAnswers[this.currentIndex];
-      console.log('pre selOpt:', this.selectedOption)
+      this.selectedOption = this.benutzerAnswers[this.currentIndex] || [];
+      console.log('pre selOpt:', this.selectedOption);
 
     }
   }
@@ -45,34 +53,63 @@ export class ExamComponent {
   }
 
 
+  answeredIndexes: any[] = [];
+
   isTrue(questionArrayIndex: number, benutzerAntwort: string[]): void {
-    const correctAnswer = this.Questions[this.currentIndex].correctAnswer;
-    const sortedCorrectAnswer = correctAnswer.slice().sort();
     const sortedBenutzerAntwort = benutzerAntwort.slice().sort();
 
-    if (this.benutzerAnswers.length > questionArrayIndex) {
-      this.benutzerAnswers[questionArrayIndex] = sortedBenutzerAntwort;
+    // Eğer bu soruya daha önce cevap verildiyse ve cevap değişmemişse
+    const previousAnswer = this.answeredIndexes.find(ai => ai.index === this.currentIndex);
+    if (previousAnswer && this.isEqual(previousAnswer.answer, sortedBenutzerAntwort)) {
+        this.nextQuestion();
+        return;
+    }
+
+    // Eğer kullanıcı cevabı boş ise ve bu soru daha önce doğru olarak cevaplandıysa, kontrolü atla
+    if (benutzerAntwort.length === 0 && previousAnswer && this.isEqual(previousAnswer.answer, this.Questions[this.currentIndex].correctAnswer)) {
+        this.nextQuestion();
+        return;
+    }
+
+    // Soruya verilen yeni cevabı saklayın
+    if (previousAnswer) {
+        previousAnswer.answer = sortedBenutzerAntwort;
     } else {
-      this.benutzerAnswers.push(sortedBenutzerAntwort);
+        this.answeredIndexes.push({ index: this.currentIndex, answer: sortedBenutzerAntwort });
+    }
+
+    const correctAnswer = this.Questions[this.currentIndex].correctAnswer;
+    const sortedCorrectAnswer = correctAnswer.slice().sort();
+
+    if (this.benutzerAnswers.length > questionArrayIndex) {
+        this.benutzerAnswers[questionArrayIndex] = sortedBenutzerAntwort;
+    } else {
+        this.benutzerAnswers.push(sortedBenutzerAntwort);
     }
 
     if (this.isEqual(sortedCorrectAnswer, sortedBenutzerAntwort)) {
-      this.correctAnswer++;
-      console.log('Dogru cevap Sayisi', this.correctAnswer)
+        if (!this.benutzerAnswers.includes(this.currentIndex)) {
+            this.correctAnswer++;
+            console.log('Dogru cevap Sayisi', this.correctAnswer);
+        }
     } else {
-      this.falseAnswer++;
-      console.log('Yanlis cevap Sayisi', this.falseAnswer)
+        this.falseAnswer++;
+        console.log('Yanlis cevap Sayisi', this.falseAnswer);
     }
+
+    console.log('kullanici cevabi:', benutzerAntwort); // Bu log, doğru veya yanlış cevap kontrolünden sonra yazdırıldı
+
     if (this.currentIndex >= 120 || this.falseAnswer > this.Questions.length * 0.2) {
-      this.router.navigate(['/result']);
+        this.router.navigate(['/result']);
     }
 
     this.nextQuestion();
 
-
     this.shs.setCorrectAnswer(this.correctAnswer);
     this.shs.setfalseAnswer(this.falseAnswer);
-  }
+}
+
+  
 
   Gewaehlt(option: string, event: any): void {
     const questionType = this.Questions[this.currentIndex].questionType;
@@ -129,6 +166,8 @@ export class ExamComponent {
   nextQuestion(): void {
     if (this.currentIndex < this.Questions.length - 1) {
       this.currentIndex++;
+      this.selectedOption = this.benutzerAnswers[this.currentIndex] || [];
+
     }
   }
 }

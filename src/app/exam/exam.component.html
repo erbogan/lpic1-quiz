@@ -3,8 +3,7 @@
   <p>{{ Questions[currentIndex].question }}</p>
 
   <div *ngIf="Questions[currentIndex].questionType === 'fill-in'">
-    <h3>in fill in</h3>
-    <input type="text" (change)="Gewaehlt('',$event)" />
+    <input type="text"  (change)="Gewaehlt('',$event)"/>
   </div>
   <div *ngFor="let option of Questions[currentIndex].options; let i = index">
     <label *ngIf="Questions[currentIndex].questionType==='single-choice'">
@@ -22,6 +21,7 @@
     <button (click)="SkipQuestion()">Skip</button>
     <button (click)="previousQuestion()">Zurück</button>
     <button  (click)="onButtonClick()">Nächste</button>
+
   </div>
 </div>
 
